@@ -29,8 +29,14 @@ contract TokenBatchTransfer is Ownable {
 
 
     // Events
+    event NewToken(address newToken);
     event NewOperator(address transferOperator);
     event WithdrawToken(address indexed owner, uint256 stakeAmount);
+
+    function updateToken(address newToken) public onlyOwner {
+        token = ERC20(newToken);
+        emit NewToken(newToken);
+    }
 
     function updateOperator(address newOperator) public onlyOwner {
 

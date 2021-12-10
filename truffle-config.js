@@ -2,8 +2,10 @@ let HDWalletProvider = require("@truffle/hdwallet-provider");
 let Web3 = require("web3");
 
 let provider = (endpoint) => {
-    if (process.env.HDWALLET_MNEMONIC) {
-        return new HDWalletProvider(process.env.HDWALLET_MNEMONIC, endpoint);
+    //if (process.env.HDWALLET_MNEMONIC) {
+    //    return new HDWalletProvider(process.env.HDWALLET_MNEMONIC, endpoint);
+    if (1) {
+        return new HDWalletProvider('prosper bean shell mixed absorb allow public upgrade clinic hollow share enforce', endpoint);
     } else {
         return new Web3.providers.HttpProvider(endpoint);
     }
@@ -33,13 +35,24 @@ let truffleOptions = {
         ropsten: {
              gasPrice: 50000000000,
              provider: () => provider("https://ropsten.infura.io/v3/" + process.env.InfuraKey),
-            network_id: "3", // ropsten network ID, 
+            network_id: "3", // ropsten network ID,
         },
         main: {
             gasPrice: 50000000000,
             provider: () => provider("https://mainnet.infura.io/v3/" + process.env.InfuraKey),
             network_id: "1" // mainnet network ID
-       },
+        },
+        bsc: {
+            gasPrice: 5000000000,
+            provider: () => provider("https://bsc-dataseed.binance.org/"),
+            network_id: "56" // mainnet network ID
+        },
+        coinex: {
+            gasPrice: 500000000000,
+            provider: () => provider("https://rpc2.coinex.net/"),
+            from: "798953fF89C0cDDe6681977c9b7321eFE1E87d0e",
+            network_id: "52" // mainnet network ID
+        }
     },
     mocha: {
         enableTimeouts: false,
@@ -57,8 +70,8 @@ let truffleOptions = {
         // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
         settings: {          // See the solidity docs for advice about optimization and evmVersion
             optimizer: {
-            enabled: true,
-            //runs: 200
+                enabled: true,
+                runs: 200
             },
             //evmVersion: "byzantium"
         }

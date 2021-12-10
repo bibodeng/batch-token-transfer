@@ -24,7 +24,7 @@ async function testErrorRevert(prom)
     }
     assert(rezE >= 0, "Must generate error and error message must contain revert");
 }
-  
+
 contract('TokenBatchTransfer', function(accounts) {
 
 console.log("Number of Accounts - ", accounts.length)
@@ -32,11 +32,11 @@ console.log("Number of Accounts - ", accounts.length)
     var tokenBatchTransfer;
     var tokenAddress;
     var token;
-    
+
     let GAmt = 10000  * 100000000;
 
 
-    before(async () => 
+    before(async () =>
         {
             tokenBatchTransfer = await TokenBatchTransfer.deployed();
             tokenAddress = await tokenBatchTransfer.token.call();
@@ -123,16 +123,18 @@ console.log("Number of Accounts - ", accounts.length)
 
     // ************************ Test Scenarios Starts From Here ********************************************
 
-  
-    
-    
 
-    it("0. Initial Account Setup - Transfer & Approve Tokens", async function() 
+
+
+
+    it("0. Initial Account Setup - Transfer & Approve Tokens", async function()
     {
         // accounts[0] -> Contract Owner
 
         // An explicit call is required to mint the tokens for AGI-II
         await token.mint(accounts[0], 2*GAmt, {from:accounts[0]});
+        var a = await token.balanceOf(accounts[0]);
+        console.log(a.toNumber());
 
         //await approveTokensToContract(1, 9, GAmt);
 
@@ -141,115 +143,115 @@ console.log("Number of Accounts - ", accounts.length)
 
     });
 
-    it("1. Administrative Operations - Update Owner", async function() 
-    {
+    //it("1. Administrative Operations - Update Owner", async function()
+    //{
 
-        // Change the Owner to Accounts[1]
-        await updateOwnerAndVerify(accounts[1], accounts[0]);
+    //    // Change the Owner to Accounts[1]
+    //    await updateOwnerAndVerify(accounts[1], accounts[0]);
 
-        // Revert to back the ownership to accounts[0]
-        await updateOwnerAndVerify(accounts[0], accounts[1]);
+    //    // Revert to back the ownership to accounts[0]
+    //    await updateOwnerAndVerify(accounts[0], accounts[1]);
 
-        // Owner Cannot be updated by any other user
-        await testErrorRevert(tokenBatchTransfer.transferOwnership(accounts[1], {from:accounts[2]}));
+    //    // Owner Cannot be updated by any other user
+    //    await testErrorRevert(tokenBatchTransfer.transferOwnership(accounts[1], {from:accounts[2]}));
 
-    });
+    //});
 
-    it("2. Administrative Operations - Update Transfer Operator", async function() 
-    {
+    //it("2. Administrative Operations - Update Transfer Operator", async function()
+    //{
 
-        // Update the Transfer Operator to accounts[9]
-        await updateTransferOperatorAndVeryfy(accounts[9], accounts[0]);
+    //    // Update the Transfer Operator to accounts[9]
+    //    await updateTransferOperatorAndVeryfy(accounts[9], accounts[0]);
 
-        // Transfer Operator should be uodated only by Owner
-        await testErrorRevert(tokenBatchTransfer.updateOperator(accounts[8], {from:accounts[1]}));
+    //    // Transfer Operator should be uodated only by Owner
+    //    await testErrorRevert(tokenBatchTransfer.updateOperator(accounts[8], {from:accounts[1]}));
 
-        // Even the Oprator cannot update to another operator
-        await testErrorRevert(tokenBatchTransfer.updateOperator(accounts[8], {from:accounts[9]}));
+    //    // Even the Oprator cannot update to another operator
+    //    await testErrorRevert(tokenBatchTransfer.updateOperator(accounts[8], {from:accounts[9]}));
 
-    });
+    //});
 
-    it("3. Batch Transfers - 1", async function() 
-    {
+    //it("3. Batch Transfers - 1", async function()
+    //{
 
-        let tokenHolders = [];
-        let amounts = [];
-        let max = 100;
+    //    let tokenHolders = [];
+    //    let amounts = [];
+    //    let max = 100;
 
-        for(var i=1; i<accounts.length; i++) {
+    //    for(var i=1; i<accounts.length; i++) {
 
-            tokenHolders.push(accounts[i]);
-            amounts.push(getRandomNumber(max) * 100000000);
+    //        tokenHolders.push(accounts[i]);
+    //        amounts.push(getRandomNumber(max) * 100000000);
 
-        }
+    //    }
 
-        // Even the Owner cannot initiate the batch transfer
-        await testErrorRevert(tokenBatchTransfer.batchTransfer(tokenHolders, amounts, {from:accounts[0]}));
+    //    // Even the Owner cannot initiate the batch transfer
+    //    await testErrorRevert(tokenBatchTransfer.batchTransfer(tokenHolders, amounts, {from:accounts[0]}));
 
-        // Even non Operator cannot initiate the batch transfer
-        await testErrorRevert(tokenBatchTransfer.batchTransfer(tokenHolders, amounts, {from:accounts[5]}));
+    //    // Even non Operator cannot initiate the batch transfer
+    //    await testErrorRevert(tokenBatchTransfer.batchTransfer(tokenHolders, amounts, {from:accounts[5]}));
 
-        //let contractTokenBalance = (await token.balanceOf(tokenBatchTransfer.address)).toNumber();
-        // console.log("Contract Before Balance - ", contractTokenBalance);
-        // console.log("Account-1 Before Balance - ", (await token.balanceOf(accounts[1])).toNumber());
+    //    //let contractTokenBalance = (await token.balanceOf(tokenBatchTransfer.address)).toNumber();
+    //    // console.log("Contract Before Balance - ", contractTokenBalance);
+    //    // console.log("Account-1 Before Balance - ", (await token.balanceOf(accounts[1])).toNumber());
 
-        await tokenBatchTransfer.batchTransfer(tokenHolders, amounts, {from:accounts[9]});
+    //    await tokenBatchTransfer.batchTransfer(tokenHolders, amounts, {from:accounts[9]});
 
-        //contractTokenBalance = (await token.balanceOf(tokenBatchTransfer.address)).toNumber();
+    //    //contractTokenBalance = (await token.balanceOf(tokenBatchTransfer.address)).toNumber();
 
-        // console.log("Contract After Balance - ", contractTokenBalance);
-        // console.log("Account-1 After Balance - ", (await token.balanceOf(accounts[1])).toNumber());
+    //    // console.log("Contract After Balance - ", contractTokenBalance);
+    //    // console.log("Account-1 After Balance - ", (await token.balanceOf(accounts[1])).toNumber());
 
-    });
+    //});
 
-    it("3. Batch Transfers - 2", async function() 
-    {
+    //it("3. Batch Transfers - 2", async function()
+    //{
 
-        let tokenHolders = [];
-        let amounts = [];
-        let max = 100;
+    //    let tokenHolders = [];
+    //    let amounts = [];
+    //    let max = 100;
 
-        for(var i=1; i<accounts.length; i++) {
+    //    for(var i=1; i<accounts.length; i++) {
 
-            tokenHolders.push(accounts[i]);
-            amounts.push(getRandomNumber(max) * 100000000);
+    //        tokenHolders.push(accounts[i]);
+    //        amounts.push(getRandomNumber(max) * 100000000);
 
-        }
+    //    }
 
-        // Transfer the tokens to contract for 2nd run
-        await token.transfer(tokenBatchTransfer.address, GAmt, {from:accounts[0]});
+    //    // Transfer the tokens to contract for 2nd run
+    //    await token.transfer(tokenBatchTransfer.address, GAmt, {from:accounts[0]});
 
-        //let contractTokenBalance = (await token.balanceOf(tokenBatchTransfer.address)).toNumber();
-        //console.log("Contract Before Balance - ", contractTokenBalance);
-        //console.log("Account-1 Before Balance - ", (await token.balanceOf(accounts[1])).toNumber());
+    //    //let contractTokenBalance = (await token.balanceOf(tokenBatchTransfer.address)).toNumber();
+    //    //console.log("Contract Before Balance - ", contractTokenBalance);
+    //    //console.log("Account-1 Before Balance - ", (await token.balanceOf(accounts[1])).toNumber());
 
-        await tokenBatchTransfer.batchTransfer(tokenHolders, amounts, {from:accounts[9]});
+    //    await tokenBatchTransfer.batchTransfer(tokenHolders, amounts, {from:accounts[9]});
 
-        //contractTokenBalance = (await token.balanceOf(tokenBatchTransfer.address)).toNumber();
+    //    //contractTokenBalance = (await token.balanceOf(tokenBatchTransfer.address)).toNumber();
 
-        //console.log("Contract After Balance - ", contractTokenBalance);
-        //console.log("Account-1 After Balance - ", (await token.balanceOf(accounts[1])).toNumber());
+    //    //console.log("Contract After Balance - ", contractTokenBalance);
+    //    //console.log("Account-1 After Balance - ", (await token.balanceOf(accounts[1])).toNumber());
 
-    });
+    //});
 
-    it("5. Administrative Operations - Withdraw Pending Tokens to Wallet", async function() 
-    {
+    //it("5. Administrative Operations - Withdraw Pending Tokens to Wallet", async function()
+    //{
 
-        // Get the Final Balance from the Contract
-        const balanceInContract = await token.balanceOf(tokenBatchTransfer.address);
+    //    // Get the Final Balance from the Contract
+    //    const balanceInContract = await token.balanceOf(tokenBatchTransfer.address);
 
-        // Withdraw the Balance and Verify should be done only operator not even owner
-        await testErrorRevert(tokenBatchTransfer.withdrawToken(balanceInContract, {from:accounts[0]}));
+    //    // Withdraw the Balance and Verify should be done only operator not even owner
+    //    await testErrorRevert(tokenBatchTransfer.withdrawToken(balanceInContract, {from:accounts[0]}));
 
-        // Withdraw the Balance and Verify should be done only operator not even other users
-        await testErrorRevert(tokenBatchTransfer.withdrawToken(balanceInContract, {from:accounts[5]}));
+    //    // Withdraw the Balance and Verify should be done only operator not even other users
+    //    await testErrorRevert(tokenBatchTransfer.withdrawToken(balanceInContract, {from:accounts[5]}));
 
-        // Withdraw the Balance and Verify
-        await withdrawTokenAndVerify(balanceInContract, accounts[9])
+    //    // Withdraw the Balance and Verify
+    //    await withdrawTokenAndVerify(balanceInContract, accounts[9])
 
-    });
+    //});
 
-    
+
 
 
 });
